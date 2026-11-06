@@ -1,0 +1,64 @@
+PRUEBA DEL SISTEMA DE GESTION DE EMPLEADOS CON ORACLE
+======================================================
+
+Abre PowerShell en la carpeta del proyecto.
+
+1. Preparar el entorno (solo la primera vez)
+---------------------------------------------
+
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
+notepad .env
+
+En .env, reemplaza los valores de ejemplo por los datos de tu instancia:
+
+ORACLE_USER=tu_usuario
+ORACLE_PASSWORD=tu_contrasena
+ORACLE_DSN=host:puerto/servicio
+
+Ejemplo de formato DSN local: localhost:1521/FREEPDB1.
+No compartas ni subas .env; contiene credenciales privadas.
+
+2. Ejecutar las pruebas automatizadas
+--------------------------------------
+
+.\.venv\Scripts\python.exe -m pytest -v
+
+Resultado esperado: todas las pruebas terminan con "passed". La cantidad puede
+cambiar si se agregan nuevos casos de prueba.
+Las pruebas usan una conexión simulada y no requieren una instancia Oracle.
+
+3. Iniciar la aplicación para probarla manualmente
+---------------------------------------------------
+
+.\.venv\Scripts\python.exe -m app
+
+En el menu, prueba estas acciones:
+
+1. Registra un empleado:
+   Nombre completo: Ana Perez
+   Correo: ana@example.com
+   Cargo: Analista
+   Sueldo: 1200
+
+2. Selecciona la opcion 2 para listar los empleados.
+3. Selecciona la opcion 3 y escribe el ID mostrado al registrar.
+4. Selecciona la opcion 4, escribe ese ID y proporciona los nuevos datos.
+5. Selecciona la opcion 5 y escribe el ID para eliminar el empleado.
+6. Selecciona la opcion 0 para salir.
+
+Prueba tambien escribir letras cuando se solicite un sueldo o ID. El sistema
+debe mostrar un mensaje de error y continuar mostrando el menu.
+Prueba registrar otra vez el mismo correo para verificar que informa el
+conflicto y no detiene la aplicacion.
+
+La primera ejecución crea la tabla EMPLOYEES en el esquema de Oracle configurado
+si no existe. El usuario debe poder consultar USER_TABLES y crear tablas en su
+esquema. Los registros se guardan en esa base Oracle, no en un archivo local.
+Usa datos ficticios o un esquema de prueba.
+
+La aplicación requiere Oracle 12c o superior para la columna IDENTITY utilizada.
+Si el ejemplo de conexión compartido contiene valores ocultos o incompletos,
+no los copies: solicita al administrador tu usuario, contraseña, host, puerto
+y nombre de servicio.

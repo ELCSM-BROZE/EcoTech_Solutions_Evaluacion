@@ -1,0 +1,6 @@
+# Dependencias para conectarse a Oracle y leer la configuración local.
+oracledb>=2.5,<4
+python-dotenv>=1.0,<2
+
+# Dependencia para ejecutar las pruebas automatizadas.
+pytest>=8.3,<10
