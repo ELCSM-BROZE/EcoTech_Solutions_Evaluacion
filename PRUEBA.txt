@@ -17,6 +17,10 @@ ORACLE_USER=tu_usuario
 ORACLE_PASSWORD=tu_contrasena
 ORACLE_DSN=host:puerto/servicio
 
+# Clave de tu cuenta WeatherAPI.com (no la compartas ni la subas a Git).
+WEATHERAPI_API_KEY=tu_clave_weatherapi
+WEATHERAPI_DEFAULT_CITY=Santiago, Colina
+
 Ejemplo de formato DSN local: localhost:1521/FREEPDB1.
 No compartas ni subas .env; contiene credenciales privadas.
 
@@ -46,7 +50,9 @@ En el menu, prueba estas acciones:
 3. Selecciona la opcion 3 y escribe el ID mostrado al registrar.
 4. Selecciona la opcion 4, escribe ese ID y proporciona los nuevos datos.
 5. Selecciona la opcion 5 y escribe el ID para eliminar el empleado.
-6. Selecciona la opcion 0 para salir.
+6. Selecciona la opcion 6 para consultar el clima de Santiago, Colina o escribe
+   otra ciudad. Se requiere una clave WeatherAPI valida y conexion a Internet.
+7. Selecciona la opcion 0 para salir.
 
 Prueba tambien escribir letras cuando se solicite un sueldo o ID. El sistema
 debe mostrar un mensaje de error y continuar mostrando el menu.

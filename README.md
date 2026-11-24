@@ -20,6 +20,7 @@ explique el trabajo con apoyo crítico de una herramienta de IA.
 - `pip`, incluido con Python.
 - Instancia Oracle accesible y un usuario con permisos para crear tablas en su
   propio esquema.
+- Clave de API de WeatherAPI.com para consultar el clima actual.
 - `oracledb` (driver oficial de Python para Oracle) y `python-dotenv`.
 - `pytest`, para ejecutar las pruebas automatizadas.
 - Editor de código y una IA generativa como apoyo opcional, no como sustituto
@@ -43,8 +44,12 @@ python -m app
 Edita `.env` con el usuario, contraseña y DSN de **tu propia instancia Oracle**.
 El DSN suele tener el formato `host:puerto/servicio` (por ejemplo,
 `localhost:1521/FREEPDB1`). No compartas ni subas `.env`; está ignorado por Git.
-La aplicación crea la tabla `EMPLOYEES` en el esquema de ese usuario si aún no
-existe. Para salir, selecciona `0`.
+Agrega también tu clave en `WEATHERAPI_API_KEY`; opcionalmente cambia
+`WEATHERAPI_DEFAULT_CITY` (inicialmente `Santiago, Colina`). La opción 6 del menú
+consulta el clima actual de esa ciudad o de otra que escribas. La aplicación
+crea la tabla `EMPLOYEES` en el esquema Oracle si aún no existe. Si Oracle no
+está disponible, puedes seguir usando la consulta del clima. Para salir,
+selecciona `0`.
 
 El driver usa el modo Thin por defecto, que no requiere instalar Oracle Instant
 Client para conexiones TCP habituales. Si PowerShell impide activar el entorno,
@@ -63,6 +68,7 @@ credenciales ni modifican Oracle. Para validar una conexión real, configura
 ## Funcionalidades
 
 - Registrar, listar, consultar, actualizar y eliminar empleados.
+- Consultar clima actual por ciudad usando WeatherAPI.com.
 - Validar nombre, correo, cargo y sueldo antes de guardar.
 - Evitar correos duplicados mediante una restricción `UNIQUE` de Oracle.
 - Usar parámetros con nombre (`:email`, `:employee_id`) en las consultas.

@@ -62,7 +62,10 @@ ORACLE_DSN=host:puerto/servicio
 Por ejemplo, una instancia local puede usar un DSN como
 `localhost:1521/FREEPDB1`; el host, puerto y servicio reales dependen de la
 instalación del estudiante. No subas el archivo `.env` ni incluyas credenciales
-en capturas o entregas públicas.
+en capturas o entregas públicas. Para habilitar la consulta del clima, agrega
+tu clave de WeatherAPI.com en `WEATHERAPI_API_KEY` y configura
+`WEATHERAPI_DEFAULT_CITY` (por defecto, `Santiago, Colina`). No compartas la
+clave ni la guardes en el código fuente.
 
 ## 4. Entender la estructura y las responsabilidades
 
@@ -100,11 +103,14 @@ Prueba el menú en este orden:
 4. Intenta registrar de nuevo el mismo correo y confirma que se informa el
    conflicto.
 5. Elimina el empleado y comprueba que ya no aparece.
-6. Ingresa texto donde se espera un número y confirma que el menú sigue activo.
+6. Selecciona la opción 6 para consultar el clima. Acepta la ciudad por defecto
+   o escribe otra; verifica que se muestran condición, temperatura y humedad.
+7. Ingresa texto donde se espera un número y confirma que el menú sigue activo.
 
 Los registros quedan en la tabla `EMPLOYEES` del esquema Oracle asociado al
 usuario configurado. Para las pruebas manuales usa datos ficticios y, de ser
-posible, un esquema de prueba.
+posible, un esquema de prueba. La consulta meteorológica necesita conexión a
+Internet y una clave válida; puede usarse aunque Oracle no esté disponible.
 
 ## 6. Validar técnicamente el apoyo de IA
 

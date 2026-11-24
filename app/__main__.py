@@ -6,6 +6,7 @@ import sys
 from app.database import Database
 from app.models import Employee
 from app.repository import EmployeeRepository
+from app.weather import WeatherAPI, WeatherAPIError
 
 
 def _read_employee() -> Employee:
@@ -30,17 +31,38 @@ def _show_employee(employee: Employee) -> None:
     )
 
 
+def _show_weather() -> None:
+    try:
+        weather_api = WeatherAPI()
+        city = input(f"Ciudad [{weather_api.default_city}]: ").strip()
+        weather = weather_api.current(city or weather_api.default_city)
+    except WeatherAPIError as error:
+        print(f"No se pudo consultar el clima: {error}")
+        return
+
+    location = ", ".join(
+        part for part in (weather.location, weather.region, weather.country) if part
+    )
+    print(
+        f"Clima actual en {location} ({weather.local_time}): "
+        f"{weather.condition}, {weather.temperature_c:.1f} °C "
+        f"(sensación {weather.feels_like_c:.1f} °C), "
+        f"humedad {weather.humidity}%."
+    )
+
+
 def main() -> int:
     database = Database()
     repository = EmployeeRepository(database)
+    database_available = True
     try:
         database.initialize()
     except ValueError as error:
-        print(f"Configuración de Oracle incompleta: {error}", file=sys.stderr)
-        return 1
+        database_available = False
+        print(f"Oracle no está disponible: {error}", file=sys.stderr)
     except oracledb.Error as error:
-        print(f"No se pudo conectar o preparar Oracle: {error}", file=sys.stderr)
-        return 1
+        database_available = False
+        print(f"Oracle no está disponible: {error}", file=sys.stderr)
 
     while True:
         print(
@@ -50,6 +72,7 @@ def main() -> int:
             "3. Buscar por ID\n"
             "4. Actualizar empleado\n"
             "5. Eliminar empleado\n"
+            "6. Consultar clima actual\n"
             "0. Salir"
         )
         try:
@@ -61,6 +84,10 @@ def main() -> int:
         if choice == "0":
             print("Hasta luego.")
             return 0
+
+        if choice in {"1", "2", "3", "4", "5"} and not database_available:
+            print("Las operaciones de empleados requieren una conexión Oracle.")
+            continue
 
         try:
             if choice == "1":
@@ -99,6 +126,8 @@ def main() -> int:
                     print("Empleado eliminado.")
                 else:
                     print("No se encontró ese empleado.")
+            elif choice == "6":
+                _show_weather()
             else:
                 print("Opción no válida. Elige un número del menú.")
         except ValueError as error:

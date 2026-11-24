@@ -1,4 +1,5 @@
 from app import __main__ as cli
+from app.weather import CurrentWeather
 from tests.fakes import FakeDatabase
 
 
@@ -63,3 +64,41 @@ def test_complete_crud_flow_from_console(monkeypatch, capsys) -> None:
     assert "Empleado eliminado." in output
     assert "No hay empleados registrados." in output
     assert database.rows == {}
+
+
+def test_weather_can_be_queried_when_oracle_is_unavailable(
+    monkeypatch, capsys
+) -> None:
+    class UnavailableDatabase:
+        def initialize(self) -> None:
+            raise ValueError("Configura Oracle para usar el CRUD.")
+
+    class FakeWeatherAPI:
+        default_city = "Santiago, Colina"
+
+        def current(self, city: str) -> CurrentWeather:
+            assert city == "Santiago, Colina"
+            return CurrentWeather(
+                location="Colina",
+                region="Santiago",
+                country="Chile",
+                local_time="2026-11-23 20:00",
+                condition="Soleado",
+                temperature_c=22.5,
+                feels_like_c=23.0,
+                humidity=40,
+            )
+
+    monkeypatch.setattr(cli, "Database", UnavailableDatabase)
+    monkeypatch.setattr(cli, "WeatherAPI", FakeWeatherAPI)
+    answers = iter(["2", "6", "", "0"])
+    monkeypatch.setattr("builtins.input", lambda _prompt: next(answers))
+
+    assert cli.main() == 0
+
+    output = capsys.readouterr()
+    assert "Oracle no está disponible" in output.err
+    assert "requieren una conexión Oracle" in output.out
+    assert "Entrada no válida" not in output.out
+    assert "Clima actual en Colina, Santiago, Chile" in output.out
+    assert "Soleado, 22.5 °C" in output.out
