@@ -1,104 +1,146 @@
-# Sistema de Gestión de Empleados — EcoTech Solutions
 
-Aplicación de consola CRUD desarrollada en Python con programación orientada a
-objetos y Oracle Database. Está planteada para que **un estudiante** realice y
-explique el trabajo con apoyo crítico de una herramienta de IA.
+## Que paja documentar ##
 
-> **Modalidad:** la guía original indica equipos de 2 a 3 estudiantes. Esta
-> versión está adaptada a la solicitud de trabajo individual; confirma con el
-> docente que puedes entregar en esa modalidad.
 
-> **Alcance del modelo:** la guía hace referencia a un diagrama UML validado en
-> la unidad anterior, pero ese diagrama no venía en los archivos recibidos. Este
-> proyecto propone un modelo mínimo de `Empleado` y `EmpleadoRepository`.
-> Antes de entregar, coteja nombres, atributos y relaciones con tu UML validado
-> y ajusta el código si es distinto.
+PRUEBA DEL SISTEMA DE GESTION DE EMPLEADOS CON ORACLE
+======================================================
 
-## Requisitos
+Abre PowerShell en la carpeta del proyecto.
 
-- Python 3.11 o superior (el entorno se creó con Python 3.13).
-- `pip`, incluido con Python.
-- Instancia Oracle accesible y un usuario con permisos para crear tablas en su
-  propio esquema.
-- Clave de API de WeatherAPI.com para consultar el clima actual.
-- `oracledb` (driver oficial de Python para Oracle) y `python-dotenv`.
-- `pytest`, para ejecutar las pruebas automatizadas.
-- Editor de código y una IA generativa como apoyo opcional, no como sustituto
-  de la revisión del estudiante.
+1. Preparar el entorno (solo la primera vez)
+---------------------------------------------
 
-## Configuración y ejecución en Windows PowerShell
-
-Desde la carpeta del proyecto:
-
-```powershell
-python --version
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 Copy-Item .env.example .env
 notepad .env
-python -m app
-```
 
-Edita `.env` con el usuario, contraseña y DSN de **tu propia instancia Oracle**.
-El DSN suele tener el formato `host:puerto/servicio` (por ejemplo,
-`localhost:1521/FREEPDB1`). No compartas ni subas `.env`; está ignorado por Git.
-Agrega también tu clave en `WEATHERAPI_API_KEY`; opcionalmente cambia
-`WEATHERAPI_DEFAULT_CITY` (inicialmente `Santiago, Colina`). La opción 6 del menú
-consulta el clima actual de esa ciudad o de otra que escribas. La aplicación
-crea la tabla `EMPLOYEES` en el esquema Oracle si aún no existe. Si Oracle no
-está disponible, puedes seguir usando la consulta del clima. Para salir,
-selecciona `0`.
+En .env, reemplaza los valores de ejemplo por los datos de tu instancia:
 
-El driver usa el modo Thin por defecto, que no requiere instalar Oracle Instant
-Client para conexiones TCP habituales. Si PowerShell impide activar el entorno,
-usa `.\.venv\Scripts\python.exe` en lugar de `python`.
+ORACLE_USER=tu_usuario
+ORACLE_PASSWORD=tu_contrasena
+ORACLE_DSN=host:puerto/servicio
 
-## Pruebas
+# Clave de tu cuenta WeatherAPI.com (no la compartas ni la subas a Git).
+WEATHERAPI_API_KEY=tu_clave_weatherapi
+WEATHERAPI_DEFAULT_CITY=Santiago, Colina
 
-```powershell
+Ejemplo de formato DSN local: localhost:1521/FREEPDB1.
+No compartas ni subas .env; contiene credenciales privadas.
+
+2. Ejecutar las pruebas automatizadas
+--------------------------------------
+
 .\.venv\Scripts\python.exe -m pytest -v
-```
 
-Las pruebas usan un doble en memoria del contrato de conexión y no necesitan
-credenciales ni modifican Oracle. Para validar una conexión real, configura
-`.env` y ejecuta la aplicación contra una instancia de prueba.
+Resultado esperado: todas las pruebas terminan con "passed". La cantidad puede
+cambiar si se agregan nuevos casos de prueba.
+Las pruebas usan una conexión simulada y no requieren una instancia Oracle.
 
-## Funcionalidades
+3. Iniciar la aplicación para probarla manualmente
+---------------------------------------------------
 
-- Registrar, listar, consultar, actualizar y eliminar empleados.
-- Consultar clima actual por ciudad usando WeatherAPI.com.
-- Validar nombre, correo, cargo y sueldo antes de guardar.
-- Evitar correos duplicados mediante una restricción `UNIQUE` de Oracle.
-- Usar parámetros con nombre (`:email`, `:employee_id`) en las consultas.
-- Manejar errores de validación, registros inexistentes y problemas de Oracle.
+.\.venv\Scripts\python.exe -m app
 
-## Estructura
+En el menu, prueba estas acciones:
 
-```text
-app/
-  __init__.py
-  __main__.py       # punto de entrada y menú
-  database.py       # conexión y esquema Oracle
-  models.py         # entidad Empleado y validaciones
-  repository.py     # operaciones CRUD
-tests/
-  fakes.py
-  test_cli.py
-  test_models.py
-  test_repository.py
-docs/
-  PASO_A_PASO.md
-  diagrama_flujo.md
-  rubrica_evaluacion.md
-  validacion_ia.md
-PRUEBA.txt
-requirements.txt
-.env.example
-```
+1. Registra un empleado:
+   Nombre completo: Ana Perez
+   Correo: ana@example.com
+   Cargo: Analista
+   Sueldo: 1200
 
-Consulta [el paso a paso](docs/PASO_A_PASO.md), [el diagrama de flujo y sus
-relaciones](docs/diagrama_flujo.md), [la matriz de evidencia para los 20
-criterios de la rúbrica](docs/rubrica_evaluacion.md) y [la pauta para validar
-el apoyo de IA](docs/validacion_ia.md).
+2. Selecciona la opcion 2 para listar los empleados.
+3. Selecciona la opcion 3 y escribe el ID mostrado al registrar.
+4. Selecciona la opcion 4, escribe ese ID y proporciona los nuevos datos.
+5. Selecciona la opcion 5 y escribe el ID para eliminar el empleado.
+6. Selecciona la opcion 6 para consultar el clima de Santiago, Colina o escribe
+   otra ciudad. Se requiere una clave WeatherAPI valida y conexion a Internet.
+7. Selecciona la opcion 0 para salir.
+
+Prueba tambien escribir letras cuando se solicite un sueldo o ID. El sistema
+debe mostrar un mensaje de error y continuar mostrando el menu.
+Prueba registrar otra vez el mismo correo para verificar que informa el
+conflicto y no detiene la aplicacion.
+
+La primera ejecución crea la tabla EMPLOYEES en el esquema de Oracle configurado
+si no existe. El usuario debe poder consultar USER_TABLES y crear tablas en su
+esquema. Los registros se guardan en esa base Oracle, no en un archivo local.
+Usa datos ficticios o un esquema de prueba.
+
+
+# Registro de uso y validación de IA
+
+## Declaración de uso
+## Yo no declare nada es la IA []~(￣▽￣)~* .
+
+En esta entrega se utilizó un asistente de IA (Copilot SDK en VS Code) como
+apoyo para proponer y revisar la estructura de la aplicación, implementar
+fragmentos de Python, elaborar pruebas y redactar documentación. Por lo tanto,
+el código de los archivos `app/`, `tests/` y la documentación del proyecto
+recibió apoyo de IA; no se presenta como código escrito íntegramente sin ayuda.
+
+## Criterios de revisión aplicados
+
+| Criterio | Evidencia verificable en el proyecto |
+|---|---|
+| Coherencia del modelo | `Employee` representa los datos administrados; falta cotejarlo con el UML original de Unidad 1. |
+| POO y responsabilidades | Modelo (`app/models.py`), conexión (`app/database.py`), repositorio (`app/repository.py`) e interfaz (`app/__main__.py`) separados. |
+| Persistencia | Driver oficial `oracledb`, configuración por `.env` y tabla Oracle con restricciones. |
+| Seguridad de consultas | Binds Oracle (`:employee_id`, `:email`), sin concatenación de entradas. |
+| Secretos | `.env` está excluido de Git; `.env.example` contiene solo valores de muestra. |
+| Validación y estabilidad | Reglas de `Employee`, comprobación de IDs y captura de errores específicos. |
+| Funcionamiento | Pruebas automatizadas con un doble de conexión; no requieren una instancia ni credenciales Oracle. |
+
+## Análisis de propuestas y decisiones
+
+| Propuesta apoyada por IA | Decisión del estudiante | Criterio técnico y evidencia |
+|---|---|---|
+| Usar el driver `oracledb` y `python-dotenv` del ejemplo | Adoptada | Mantiene el gestor solicitado en el ejemplo. La aplicación carga la configuración del `.env` sin incluir credenciales en el código. |
+| Separar entidad, repositorio y conexión | Adoptada y revisada | Mantiene validación de dominio, SQL y menú en responsabilidades distintas; inspeccionar los módulos indicados arriba. |
+| Usar parámetros con nombre de Oracle | Adoptada | Evita concatenar entrada en consultas; verificar los binds como `:email` en `app/repository.py`. |
+| Usar `float(input(...))` sin capturar el error | Modificada | La conversión puede fallar ante texto; el menú captura `ValueError` y vuelve a solicitar una opción en el siguiente ciclo. Probar con `no-numérico`. |
+| Aceptar cualquier ID numérico | Modificada | Un ID cero o negativo no es un identificador válido; `_read_positive_id` lo rechaza. Hay prueba de esta regla. |
+| Afirmar equivalencia exacta con el UML sin tenerlo | Descartada | El UML de Unidad 1 no fue entregado con los materiales disponibles. La comparación debe hacerse antes de afirmar correspondencia o cerrar el modelo. |
+| Copiar literalmente `conexion.cursor()` del ejemplo | Descartada | El ejemplo define `abrir()` para obtener una conexión, pero luego invoca `cursor()` en el objeto `ConexionOracle`, que no lo implementa. La versión actual crea un cursor desde la conexión que entrega el context manager y siempre lo cierra. |
+| Ejecutar `CREATE TABLE` en cada inicio sin comprobar si existe | Modificada | La inicialización consulta `USER_TABLES` y solo crea `EMPLOYEES` si no existe; errores de permisos o conexión se informan explícitamente. |
+
+## Pruebas de esta versión
+
+La suite automatizada cubre validación de atributos, el ciclo completo CRUD
+desde el menú, operaciones del repositorio contra un doble de conexión,
+configuración de credenciales, commit/rollback/cierre, creación idempotente de
+la tabla, actualización de registros inexistentes, entradas no numéricas,
+finalización de entrada y rechazo de IDs no positivos. No comprueba una
+instancia Oracle real ni la validez del DSN. Ejecuta:
+
+  ## Porque Powershell mejor CMD ╰（‵□′）╯ .
+  ```powershell
+  .\.venv\Scripts\python.exe -m pytest -v
+  ```
+
+Anota el resultado que obtuviste tú al ejecutar el comando. No declares una
+prueba manual como realizada si no la ejecutaste.
+
+En la última ejecución automatizada de este proyecto, pytest reportó 20 pruebas
+aprobadas y `compileall` compiló correctamente `app/` y `tests/`. Estos
+resultados verifican el código local con dobles de prueba; no equivalen a una
+conexión ni a una operación sobre un servidor Oracle real.
+
+## Bitácora individual que completa el estudiante
+
+Para evidenciar autoría y criterio propio, añade al menos dos consultas reales
+que hayas realizado, el código concreto revisado, la prueba ejecutada y tu
+decisión. No inventes interacciones ni resultados.
+
+| Consulta real a la IA y fragmento revisado | Prueba o criterio aplicado por el estudiante | Resultado observado y decisión personal |
+|---|---|---|
+| Completar con la consulta y el archivo real | Completar después de ejecutar | Completar con resultado real |
+| Completar con otra consulta y el fragmento real | Completar después de revisar | Completar con resultado real |
+
+> **Pendiente antes de entregar:** cotejar y actualizar el modelo según el UML
+> validado de Unidad 1; configurar y probar una instancia Oracle real con datos
+> de prueba; confirmar que el usuario Oracle tiene los permisos requeridos;
+> completar la bitácora con evidencia propia y real.
+
+## No tengo cuenta de oracle (;´༎ຶД༎ຶ`) .
